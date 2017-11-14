@@ -1,0 +1,16 @@
+{
+  "name": "game-tracker-bot",
+  "version": "0.1.0",
+  "description": "A simple discord bot that tracks a guild's game playing stats",
+  "main": "src/bot.js",
+  "repository": "https://github.com/CF12/game-tracker-bot",
+  "author": "LCC",
+  "license": "MIT",
+  "dependencies": {
+    "bufferutil": "^3.0.3",
+    "discord.js": "^11.2.1",
+    "erlpack": "github:hammerandchisel/erlpack",
+    "sodium": "^2.0.1",
+    "uws": "^8.14.1"
+  }
+}
