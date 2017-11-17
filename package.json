@@ -10,6 +10,7 @@
     "bufferutil": "^3.0.3",
     "discord.js": "^11.2.1",
     "erlpack": "github:hammerandchisel/erlpack",
+    "lowdb": "^1.0.0",
     "sodium": "^2.0.1",
     "standard": "^10.0.3",
     "uws": "^8.14.1"
