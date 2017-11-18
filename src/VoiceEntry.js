@@ -1,12 +1,13 @@
-module.exports = class PresenceEntry {
+module.exports = class VoiceEntry {
   constructor (member) {
     this.data = {
       username: member.displayName,
       bot: member.user.bot,
       time: Date.now(),
-      presence: {
-        status: member.presence.status,
-        game: (member.presence.game) ? member.presence.game.name : ''
+      voice: {
+        channel: (member.voiceChannel) ? member.voiceChannel.name : '',
+        muted: member.mute,
+        deafened: member.deaf
       }
     }
   }

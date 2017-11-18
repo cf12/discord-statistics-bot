@@ -7,6 +7,7 @@ const FileSync = require('lowdb/adapters/FileSync')
 
 const PresenceEntry = require('./PresenceEntry')
 const MessageEntry = require('./MessageEntry')
+const VoiceEntry = require('./VoiceEntry')
 
 const dbExists = fs.existsSync((path.join(__dirname, '..', 'data', 'db.json')))
 
@@ -18,8 +19,14 @@ const adapter = new FileSync(path.join(__dirname, '..', 'data', 'db.json'))
 const db = low(adapter)
 
 if (!dbExists) {
-  db.defaults({ messages: [], presences: [] })
-    .write()
+  db.defaults({
+    messages: [],
+    states: {
+      presence: [],
+      voice: []
+    }
+  })
+  .write()
 }
 
 // Loads configs
@@ -42,7 +49,15 @@ bot.on('message', (msg) => {
 bot.on('presenceUpdate', (oldMember, newMember) => {
   let presenceData = new PresenceEntry(newMember)
 
-  db.get('presences')
+  db.get('states.presence')
+    .push(presenceData.getData())
+    .write()
+})
+
+bot.on('voiceStateUpdate', (oldMember, newMember) => {
+  let presenceData = new VoiceEntry(newMember)
+
+  db.get('states.voice')
     .push(presenceData.getData())
     .write()
 })
