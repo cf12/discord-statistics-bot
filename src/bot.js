@@ -9,9 +9,10 @@ const PresenceEntry = require('./PresenceEntry')
 const MessageEntry = require('./MessageEntry')
 const VoiceEntry = require('./VoiceEntry')
 
-const dbExists = fs.existsSync((path.join(__dirname, '..', 'data', 'db.json')))
+const dbExists = fs.existsSync((path.join(__dirname, '..', 'data')))
 
 if (!dbExists) {
+  fs.mkdirSync(path.join(__dirname, '..', 'data'))
   fs.openSync(path.join(__dirname, '..', 'data', 'db.json'), 'w')
 }
 
