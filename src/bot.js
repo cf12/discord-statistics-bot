@@ -19,8 +19,20 @@ if (!dbExists) {
 const adapter = new FileSync(path.join(__dirname, '..', 'data', 'db.json'))
 const db = low(adapter)
 
+function getMsgId () {
+  let id = db.get('id.msg').value() + 1
+
+  db.set('id.msg', id)
+    .write()
+
+  return id
+}
+
 if (!dbExists) {
   db.defaults({
+    id: {
+      msg: 0
+    },
     messages: [],
     states: {
       presence: [],
@@ -40,7 +52,7 @@ bot.on('ready', () => {
 
 // Event handler for when the bot detects a message
 bot.on('message', (msg) => {
-  let msgData = new MessageEntry(msg)
+  let msgData = new MessageEntry(msg, getMsgId())
 
   db.get('messages')
     .push(msgData.getData())

@@ -1,9 +1,11 @@
 module.exports = class MessageEntry {
-  constructor (msg) {
+  constructor (msg, msgId) {
     let user = msg.author
     let member = msg.member
 
     this.data = {
+      id: msgId,
+
       user: {
         username: user.username,
         displayname: member.displayName,
@@ -12,7 +14,11 @@ module.exports = class MessageEntry {
         bot: member.user.bot
       },
 
-      message: msg.content,
+      message: {
+        content: msg.content,
+        id: msg.id
+      },
+
       timestamp: msg.createdAt.getTime()
     }
   }
