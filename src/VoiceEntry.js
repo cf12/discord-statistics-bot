@@ -1,8 +1,16 @@
 module.exports = class VoiceEntry {
   constructor (member) {
+    let user = member.user
+
     this.data = {
-      username: member.displayName,
-      bot: member.user.bot,
+      user: {
+        username: user.username,
+        displayname: member.displayName,
+        discriminator: user.discriminator,
+        id: user.id,
+        bot: member.user.bot
+      },
+
       time: Date.now(),
       voice: {
         channel: (member.voiceChannel) ? member.voiceChannel.name : '',
