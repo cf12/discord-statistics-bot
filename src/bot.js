@@ -9,15 +9,8 @@ const PresenceEntry = require('./PresenceEntry')
 const MessageEntry = require('./MessageEntry')
 const VoiceEntry = require('./VoiceEntry')
 
-const dbExists = fs.existsSync((path.join(__dirname, '..', 'data')))
-
-if (!dbExists) {
-  fs.mkdirSync(path.join(__dirname, '..', 'data'))
-  fs.openSync(path.join(__dirname, '..', 'data', 'db.json'), 'w')
-}
-
-const adapter = new FileSync(path.join(__dirname, '..', 'data', 'db.json'))
-const db = low(adapter)
+const dirExists = fs.existsSync((path.join(__dirname, '..', 'data')))
+const dbExists = fs.existsSync((path.join(__dirname, '..', 'data', 'db.json')))
 
 function getMsgId () {
   let id = db.get('id.msg').value() + 1
@@ -28,19 +21,23 @@ function getMsgId () {
   return id
 }
 
-if (!dbExists) {
-  db.defaults({
-    id: {
-      msg: 0
-    },
-    messages: [],
-    states: {
-      presence: [],
-      voice: []
-    }
-  })
-  .write()
-}
+if (!dirExists) fs.mkdirSync(path.join(__dirname, '..', 'data'))
+if (!dbExists) fs.openSync(path.join(__dirname, '..', 'data', 'db.json'), 'w')
+
+const adapter = new FileSync(path.join(__dirname, '..', 'data', 'db.json'))
+const db = low(adapter)
+
+db.defaults({
+  id: {
+    msg: 0
+  },
+  messages: [],
+  states: {
+    presence: [],
+    voice: []
+  }
+})
+.write()
 
 // Loads configs
 let config = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'config', 'config.json')))
