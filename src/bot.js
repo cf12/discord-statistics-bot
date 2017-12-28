@@ -8,6 +8,7 @@ const FileSync = require('lowdb/adapters/FileSync')
 const PresenceEntry = require('./PresenceEntry')
 const MessageEntry = require('./MessageEntry')
 const VoiceEntry = require('./VoiceEntry')
+const User = require('./User')
 
 const dirExists = fs.existsSync((path.join(__dirname, '..', 'data')))
 const dbExists = fs.existsSync((path.join(__dirname, '..', 'data', 'db.json')))
@@ -21,6 +22,23 @@ function getMsgId () {
   return id
 }
 
+function initUser (user) {
+  if (db.has(`users.${user.id}`)) return db.get(`users.${user.id}`)
+  else {
+    const template = {
+      messages: [],
+      states: {
+        presence: [],
+        voice: []
+      }
+    }
+    db.set(`users.${user.id}`, Object.assign({ user: user.getData() }, template))
+      .write()
+
+    return db.get(`users.${user.id}`)
+  }
+}
+
 if (!dirExists) fs.mkdirSync(path.join(__dirname, '..', 'data'))
 if (!dbExists) fs.openSync(path.join(__dirname, '..', 'data', 'db.json'), 'w')
 
@@ -31,11 +49,7 @@ db.defaults({
   id: {
     msg: 0
   },
-  messages: [],
-  states: {
-    presence: [],
-    voice: []
-  }
+  users: {}
 })
 .write()
 
@@ -49,25 +63,31 @@ bot.on('ready', () => {
 
 // Event handler for when the bot detects a message
 bot.on('message', (msg) => {
-  let msgData = new MessageEntry(msg, getMsgId())
+  const userData = new User(msg.member)
+  const msgData = new MessageEntry(msg, getMsgId())
 
-  db.get('messages')
+  initUser(userData)
+    .get('messages')
     .push(msgData.getData())
     .write()
 })
 
 bot.on('presenceUpdate', (oldMember, newMember) => {
-  let presenceData = new PresenceEntry(newMember)
+  const userData = new User(newMember)
+  const presenceData = new PresenceEntry(newMember)
 
-  db.get('states.presence')
+  initUser(userData)
+    .get('states.presence')
     .push(presenceData.getData())
     .write()
 })
 
 bot.on('voiceStateUpdate', (oldMember, newMember) => {
-  let presenceData = new VoiceEntry(newMember)
+  const userData = new User(newMember)
+  const presenceData = new VoiceEntry(newMember)
 
-  db.get('states.voice')
+  initUser(userData)
+    .get('states.voice')
     .push(presenceData.getData())
     .write()
 })
