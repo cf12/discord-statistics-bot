@@ -23,7 +23,7 @@ function getMsgId () {
 }
 
 function initUser (user) {
-  if (db.has(`users.${user.id}`)) return db.get(`users.${user.id}`)
+  if (db.get(`users.${user.id}`).value()) return db.get(`users.${user.id}`)
   else {
     const template = {
       messages: [],
